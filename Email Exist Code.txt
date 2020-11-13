@@ -1,0 +1,62 @@
+Check Email Exist Code--
+___________________
+___________________
+Javascript-
+___________
+
+function checkUserMail(emailUserName) {
+    var flag = false;
+
+    var userDetails={'userEmail':emailUserName};
+        console.log(userDetails);
+        $.ajax({
+            type: "POST",
+            url: "/checkEmailExist/",
+            data: userDetails,
+            async: false,
+            success: function (data) {
+                console.log(data.result);
+                if (data.result == 'exist') {
+
+                } else if (data.result == "not_exist") {
+                    flag = true;
+                }
+            },
+            error: function (error) {
+                swal('Server error');
+            }
+        });
+
+    return flag;
+}
+
+
+
+
+View.py-
+___________
+
+@csrf_exempt
+def email_exist(request):
+    try:
+        if request.method == 'POST':
+
+            userEmail = request.POST['userEmail']
+            print('userEmail==>',userEmail)
+
+            if models.User.objects.filter(username=userEmail).exists():
+                return JsonResponse({'result':'exist'})
+            else:
+                return JsonResponse({'result': 'not_exist'})
+
+
+    except Exception as e:
+        print("Exception in email_exist coachme/views.py -->", e)
+
+
+
+
+url.py-
+___________
+
+path('checkEmailExist/',views.email_exist,name='checkEmailExist'),

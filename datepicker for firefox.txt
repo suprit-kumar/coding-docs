@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+   
+
+
+ <script>
+        $(document).ready(function () {
+            var date_input = $('input[name="date"]'); //our date input has the name "date"
+            var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+            var options = {
+                format: 'yyyy-mm',
+                container: container,
+                todayHighlight: true,
+                autoclose: true,
+                minViewMode: 1
+            };
+            date_input.datepicker(options);
+        })
+    </script>
+
+
+
+<input type="text" placeholder="YYYY-MM" name="date" id="month_year">
+
+
+
+
+-----------new---------------
+$('.date-picker').datepicker({
+        "format": "yyyy-mm",
+        'startView': 1
+    }).on('changeMonth', function (e) {
+        debugger;
+        var dp = $(e.currentTarget).data('datepicker');
+        dp.date = e.date;
+        dp.setValue();
+        dp.hide();
+    });
+
+
+.ui-datepicker-calendar {
+        display: none;
+    }

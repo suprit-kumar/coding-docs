@@ -1,0 +1,3 @@
+Python calendar api
+
+example page url - https://karenapp.io/articles/how-to-automate-google-calendar-with-python-using-the-calendar-api/

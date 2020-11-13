@@ -1,0 +1,88 @@
+
+-------------JS----------------------
+
+else if (!checkClassDateAndTime(cls_date, cls_start_time)) {
+            swal('Class Date and Time alredy Assigned');
+            return false;
+        }
+
+
+function checkClassDateAndTime(selectDate, selectTime) {
+    var flag = false;
+
+    var clsHiddenId = $('#hidden_cls_id').val();
+
+
+    var checkClsDetails = {'clsHiddenId': clsHiddenId, 'clsSlctDate': selectDate, 'clsSlctTime': selectTime};
+
+    console.log('checkClsDetails-->', checkClsDetails);
+
+    $.ajax({
+        type: 'POST',
+        url: '/check_class_date_time/',
+        data: checkClsDetails,
+        async: false,
+        success: function (data) {
+
+            if (data.result == 'assigned') {
+
+            } else if (data.result == 'not_assign') {
+                flag = true;
+            }
+        },
+        error: function (error) {
+            swal('Server Error')
+        }
+
+    });
+
+    return flag;
+}
+
+
+
+--------------views------------------
+
+@csrf_exempt
+def check_cls_date_time_exist(request):
+    try:
+        if 'usercode' in request.session:
+            user_code = request.session['usercode']
+
+            if request.method == 'POST':
+
+                cls_hidden_id = request.POST['clsHiddenId']
+                cls_slct_date = request.POST['clsSlctDate']
+                cls_slct_time = request.POST['clsSlctTime']
+
+                print('cls_hidden_id-->',cls_hidden_id)
+                print('cls_slct_date-->',cls_slct_date)
+                print('cls_slct_time-->',cls_slct_time)
+
+                if cls_hidden_id == '-':
+
+                    if models.Class.objects.filter(class_date=cls_slct_date,class_start_time=cls_slct_time).exists():
+                        print('assigned')
+                        return JsonResponse({'result': 'assigned'})
+                    else:
+                        print('not_assign')
+                        return JsonResponse({'result': 'not_assign'})
+
+                elif cls_hidden_id !='-':
+
+                    if models.Class.objects.filter(class_date=cls_slct_date,class_start_time=cls_slct_time).exists():
+                        print('assigned')
+                        return JsonResponse({'result': 'assigned'})
+                    else:
+                        print('not_assign')
+                        return JsonResponse({'result': 'not_assign'})
+
+    except Exception as e:
+        print("Exception in check_cls_date_time_exist coachme/views.py -->", e)
+
+
+
+
+------------------urls-------------------
+
+ path('check_class_date_time/', views.check_cls_date_time_exist, name='check_class_date_time'),

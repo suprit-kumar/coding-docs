@@ -1,0 +1,94 @@
+@csrf_exempt
+def manager_finished_classes(request):
+    try:
+
+		myclasses=get_manager_locations(request)
+
+		if myclasses['result'] =='success':
+
+			finished_classes = list(models.Class.objects.values('class_id',
+																'class_name',
+																'class_date',
+																'class_start_time',
+																'class_end_time',
+																'loc_c_s_id__sports_id__sports_name',
+																'coach_id__coach_name',
+																'loc_c_s_id__location_id__location_name',
+																'loc_c_s_id__court_id__court_name',
+																).order_by(
+				'-class_date', '-class_end_time').filter(
+				class_id__in=myclasses['classesList'],
+				class_end_datetime__lt=datetime.datetime.now()))
+
+			if len(finished_classes) > 0:
+
+				return JsonResponse({'result': 'success', 'finished_classes': finished_classes})
+			else:
+				return JsonResponse({'result': 'no_result'})
+		elif myclasses['result'] =='no_result':
+			return JsonResponse({'result': 'no_result'})
+		elif myclasses['result'] == 'failed':
+			return JsonResponse({'result': 'failed'})
+                    
+
+    except Exception as e:
+        print('Exception in manager_finished_classes coachme/views.py -->', e)
+        return JsonResponse({'result': 'failed'})
+		
+		
+def get_manager_locations(request):
+    try:
+        if 'usercode' in request.session:
+            user_code = request.session['usercode']
+
+            if request.method == 'POST':
+
+                managerObj = models.LocationManager.objects.get(user_code=user_code)
+                managerId = managerObj.l_manager_id
+
+                if managerId is not None:
+
+                    managerLocations = list(
+                        models.Location.objects.values('location_id').filter(l_manager_id=managerId))
+
+                    if len(managerLocations) > 0:
+
+                        locationsList = []
+                        for locations in managerLocations:
+                            locationsList.append(locations['location_id'])
+
+                        if len(locationsList) > 0:
+
+                            courtsList = []
+                            courtObject = models.Court.objects.values('court_id').filter(location_id__in=locationsList)
+                            for courts in courtObject:
+                                courtsList.append(courts['court_id'])
+
+                            if len(courtsList) > 0:
+
+                                classes_map_List = []
+                                class_map_obj = models.Location_Court_Sport_Map.objects.values('loc_c_s_id').filter(
+                                    court_id__in=courtsList)
+                                for class_maps in class_map_obj:
+                                    classes_map_List.append(class_maps['loc_c_s_id'])
+
+                                if len(classes_map_List) > 0:
+
+                                    classesList = []
+                                    classList_object = models.Class.objects.values('class_id').filter(
+                                        loc_c_s_id__in=classes_map_List)
+                                    for cls_packs in classList_object:
+                                        classesList.append(cls_packs['class_id'])
+
+                                    return {'result':'success','classesList':classesList}
+                                else:
+                                    return{'result': 'no_result'}
+                            else:
+                                return {'result': 'no_result'}
+                        else:
+                            return {'result': 'no_result'}
+                    else:
+                        return {'result': 'no_result'}
+    except Exception as e:
+        print('Exception in get_manager_locations coachme/views.py -->', e)
+        return {'result': 'failed'}

@@ -1,0 +1,132 @@
+____________views---------------
+
+@csrf_exempt
+def create_update_court(request):
+    user_code = ""
+    try:
+        if 'usercode' in request.session:
+            user_code = request.session['usercode']
+
+            if request.method == 'POST':
+
+                court_id = str(request.POST['court_id'])
+                court_name = str(request.POST['court_name'])
+                court_location = str(request.POST['court_location'])
+                court_status = str(request.POST['court_status'])
+
+                court_imgOne_user_code = str(request.POST['imgOneUcode'])
+                court_imgTwo_user_code = str(request.POST['imgTwoUcode'])
+                court_imgThree_user_code = str(request.POST['imgThreeUcode'])
+
+                upload_image = request.FILES.getlist('images')
+
+                if court_id == '-':
+
+                    if upload_image is not None:
+
+                        one = upload_image[0]
+                        two = upload_image[1]
+                        three = upload_image[2]
+
+                        unique_user_code = utils.getUniqueUserCode()
+
+                        file_name1 = unique_user_code + '1.jpg'
+                        file_name2 = unique_user_code + '2.jpg'
+                        file_name3 = unique_user_code + '3.jpg'
+
+                        fullname = os.path.join(settings.MEDIA_ROOT,
+                                                'courtImages/' + file_name1 + file_name2 + file_name3)
+                        if os.path.exists(fullname):
+                            os.remove(fullname)
+                        path = default_storage.save('courtImages/' + file_name1, ContentFile(one.read()))
+                        path = default_storage.save('courtImages/' + file_name2, ContentFile(two.read()))
+                        path = default_storage.save('courtImages/' + file_name3, ContentFile(three.read()))
+                        tmp_file = os.path.join(settings.MEDIA_ROOT, path)
+
+                        court = models.Court.objects.create(
+                            court_name=court_name,
+                            court_status=court_status, court_image1=file_name1,
+                            court_image2=file_name2,
+                            court_image3=file_name3,
+                            location_id=models.Location.objects.get(location_id=int(court_location)),
+                        )
+                        court.save()
+                        return JsonResponse({'result': 'success', 'msg': 'Successfully created'})
+
+                    if upload_image is None:
+                        court = models.Court.objects.create(
+                            court_name=court_name,
+                            court_status=court_status,
+                            location_id=models.Location.objects.get(location_id=int(court_location)),
+                        )
+                        court.save()
+                        return JsonResponse({'result': 'success', 'msg': 'Successfully created'})
+                else:
+                    if 'images'  in upload_image:
+                        one = upload_image[0]
+                        two = upload_image[1]
+                        three = upload_image[2]
+
+                        file_name4 = court_imgOne_user_code
+                        file_name5 = court_imgTwo_user_code
+                        file_name6 = court_imgThree_user_code
+
+                        fullname = os.path.join(settings.MEDIA_ROOT, 'courtImages/' + file_name4 + file_name5 + file_name6)
+                        if os.path.exists(fullname):
+                            os.remove(fullname)
+                        path = default_storage.save('courtImages/' + file_name4, ContentFile(one.read()))
+                        path = default_storage.save('courtImages/' + file_name5, ContentFile(two.read()))
+                        path = default_storage.save('courtImages/' + file_name6, ContentFile(three.read()))
+                        tmp_file = os.path.join(settings.MEDIA_ROOT, path)
+
+                        court = models.Court.objects.filter(court_id=court_id).update(
+                            court_name=court_name,
+                            court_status=court_status,
+                            court_image1=file_name4,
+                            court_image2=file_name5,
+                            court_image3=file_name6,
+                            location_id=models.Location.objects.get(location_id=int(court_location)),
+                        )
+
+                        return JsonResponse({'result': 'success', 'msg': 'Successfully Updated'})
+
+                    if  'images' not in upload_image:
+
+                        court = models.Court.objects.filter(court_id=court_id).update(
+                            court_name=court_name,
+                            court_status=court_status,
+                            location_id=models.Location.objects.get(location_id=int(court_location)),
+                        )
+        else:
+            return JsonResponse({'result': 'failed', 'msg': 'Session Expired'})
+    except Exception as e:
+        print('Exception in create_update_court ---> ', e)
+        # request.session.flush()
+        return JsonResponse({'result': 'error', 'msg': 'Unexpected Error'})
+
+
+
+
+
+
+
+
+
+-----------------js----------------------------
+	var totalfiles = $('#pro-image')[0].files;
+ /*var imgOneUcode = $('#img1_ucode').val();
+    var imgTwoUcode = $('#img2_ucode').val();
+    var imgThreeUcode = $('#img3_ucode').val();*/
+
+
+    // formdata = new FormData();
+
+
+
+/*for (var i = 0; i < totalfiles.length; i++) {
+            formdata.append('images', totalfiles[i]);
+        }*/
+
+        /*for (var value of formdata.values()) {
+            console.log('formdata-->', value.name);
+        }*/

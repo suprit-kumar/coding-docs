@@ -1,0 +1,169 @@
+{% extends 'backoffice/superadmin_layout.html' %}
+{% load static %}
+{% block title %} Coachee Subscription {% endblock %}
+
+{% block hscripts %}
+
+    <style>
+
+        .coachee-table-style {
+            height: 567px;
+            overflow-y: scroll;
+        }
+
+        .subscrp-detail-style {
+            height: 310px;
+        }
+
+        .subscrp-form-style {
+            height: 247px;
+            overflow-y: scroll;
+        }
+
+        .coachee-sub-tbd {
+            display: block;
+            height: 250px;
+            overflow: auto;
+        }
+
+        .coachee-sub-thd, .coachee-sub-tbd tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card card-tasks coachee-table-style">
+                    <div class="card-header ">
+                        <h6 class="title d-inline">Coachee List</h6>
+                        <p class="card-category d-inline"></p>
+                    </div>
+                    <div class="card-body ">
+                        <div class="table-full-width table-responsive">
+                            <table class="table" id="coachee_list_subscrip">
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="card subscrp-detail-style">
+                        <div class="card-body">
+                            <table class="table" id="">
+                                <thead class="thead-light coachee-sub-thd">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Subscription Id</th>
+                                    <th>Pkg. Name</th>
+                                    <th>Pur.Date</th>
+                                    <th>Exp.Date</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody class="coachee-sub-tbd">
+                                <tr>
+                                    <td>
+                                        <div class="form-check"><label class="form-check-label"><input
+                                                class="form-check-input   "
+                                                name="" type="checkbox"><span
+                                                class="form-check-sign "></span><span class="check"></span></label>
+                                        </div>
+                                    </td>
+                                    <td class="">101</td>
+                                    <td class="">Test Class</td>
+                                    <td class="">17-04-2020</td>
+                                    <td class="">17-06-2020</td>
+                                    <td class="">Active</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-check"><label class="form-check-label"><input
+                                                class="form-check-input   "
+                                                name="" type="checkbox"><span
+                                                class="form-check-sign "></span><span class="check"></span></label>
+                                        </div>
+                                    </td>
+                                    <td class="">102</td>
+                                    <td class="">Test Class 2</td>
+                                    <td class="">18-05-2020</td>
+                                    <td class="">17-06-2020</td>
+                                    <td class="">Active</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-check"><label class="form-check-label"><input
+                                                class="form-check-input   "
+                                                name="" type="checkbox"><span
+                                                class="form-check-sign "></span><span class="check"></span></label>
+                                        </div>
+                                    </td>
+                                    <td class="">103</td>
+                                    <td class="">Test Class 3</td>
+                                    <td class="">19-05-2020</td>
+                                    <td class="">17-06-2020</td>
+                                    <td class="">Active</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card subscrp-form-style">
+                        <div class="card-header">
+                            <h5 class="title">Edit</h5>
+                        </div>
+                        <div class="card-body">
+                            <form class="">
+                                <input type="hidden" id="" value="-">
+                                <div class="row">
+                                    <div class="col-md-4 pr-md-1">
+                                        <div class="form-group">
+                                            <label>Pkg. Name</label>
+                                            <input type="text" class="form-control" id="" maxlength="30"
+                                                   placeholder="xxxxxxx">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 pr-md-1">
+                                        <div class="form-group">
+                                            <label>Pur. Date</label>
+                                            <input type="date" class="form-control" id="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 pr-md-1">
+                                        <div class="form-group">
+                                            <label>Exp. Date</label>
+                                            <input type="date" class="form-control" id="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <button style="float: right;" type="button" id="" class="btn btn-fill btn-primary">Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block fscripts %}
+    <script type="text/javascript" src="{% static 'code/js/superadmin_coachee_subscription.js' %}"></script>
+{% endblock %}

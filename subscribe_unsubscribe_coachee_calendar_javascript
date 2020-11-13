@@ -1,0 +1,72 @@
+function subscribedCoacheeAddInCalender() {
+
+    // Requirement class meeting id (The class which is joined by coachee)and koachee email id
+
+    var calendarObject, request, arry;
+    arry = [{'email': 'place_koachee_email_id'}];
+    calendarObject = {'calendarId': 'primary', 'eventId': 'paste_class_event_id'};
+    request = gapi.client.calendar.events.get(calendarObject);
+
+    request.execute(function (resp) {
+
+        /*Taking all attendees list from calendar and adding new subscribed
+         Koachee to the list and then sending it to the caledar*/
+
+        var calenderEmailList = resp.attendees;
+        for (var i = 0; i < calenderEmailList.length; i++) {
+            arry.push({'email': calenderEmailList[i]['email']})
+        }
+        var addKoacheeInCalendar = {'attendees': arry};
+        calendarObject = {
+            'calendarId': 'primary',
+            'eventId': 'e3spju3cfkmicp3s1ajjisb0qc',
+            'resource': addKoacheeInCalendar
+        };
+        request = gapi.client.calendar.events.patch(calendarObject);
+        request.execute();
+    });
+}
+
+function unsubscribedCoacheeRemoveFromCalender() {
+    // Requirement class meeting id (The class which is joined by coachee)and koachee email id
+
+    var calendarObject, request, getEmailListFromCalendar, sendEmailListToCalendar, removeKoacheeEmail;
+    getEmailListFromCalendar = [];
+    sendEmailListToCalendar = [];
+    removeKoacheeEmail = 'place_koachee_email_id';
+    calendarObject = {'calendarId': 'primary', 'eventId': 'paste_class_event_id'};
+    request = gapi.client.calendar.events.get(calendarObject);
+    request.execute(function (resp) {
+        /*Taking all the attendees list from the calendar and removing the unsubscribed koachee
+         from the list and send the list new list to calendar*/
+
+        var getEmails = resp.attendees;
+        if (getEmails.length > 0) {
+            for (var i = 0; i < getEmails.length; i++) {
+                getEmailListFromCalendar.push(getEmails[i]['email']);
+            }
+            var index = getEmailListFromCalendar.indexOf(removeKoacheeEmail);
+
+            try {
+                if (index > -1) {
+                    getEmailListFromCalendar.splice(index, 1);
+                    getEmailListFromCalendar.forEach(function (emailId) {
+                        sendEmailListToCalendar.push({'email': emailId})
+                    });
+                    calendarObject = {
+                        'calendarId': 'primary',
+                        'eventId': 'paste_class_event_id',
+                        'resource': {'attendees': sendEmailListToCalendar}
+                    };
+                    request = gapi.client.calendar.events.patch(calendarObject);
+                    request.execute();
+                }
+            } catch (error) {
+                console.log('error', error);
+            }
+        } else {
+
+        }
+
+    });
+}

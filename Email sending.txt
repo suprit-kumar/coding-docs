@@ -1,0 +1,30 @@
+----Settings file-----
+
+ADMINS = [('Ashish', 'ashish.sahoo@ioptechnologies.com')]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+MAILER_LIST = ['carrelcafe@ioptechnologies.com']
+EMAIL_HOST = 'mail.ioptechnologies.com'
+EMAIL_HOST_USER = 'carrelcafe@ioptechnologies.com'
+EMAIL_HOST_PASSWORD = 'i0pC4fe!'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = 'carrelcafe@ioptechnologies.com'
+
+
+
+-------utils file -----
+
+
+def send_manually_email(subject, message, to):
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'CoachMeProject.settings'
+    # _thread.start_new_thread(send_mail(subject, message, "carrelcafe@ioptechnologies.com", [to]))
+    _thread.start_new_thread(send_mail,(subject, message, "carrelcafe@ioptechnologies.com", [to],))
+
+
+
+def send_email(subject, message, to):
+    email_from = setting.EMAIL_HOST_USER
+    recipient_list = [to]
+    send_mail(subject, message, email_from, recipient_list)

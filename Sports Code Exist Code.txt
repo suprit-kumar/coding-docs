@@ -1,0 +1,65 @@
+Check Unique SportsCode
+_______________________
+
+urls.py
+_______
+path('checkSportsCode/',views.sport_code_exist,name='checkSportsCode'),
+
+
+views.py
+________
+
+@csrf_exempt
+def sport_code_exist(request):
+    try:
+        if request.method == 'POST':
+
+            sportsId=request.POST['hiddenSportsId']
+            sportsCode = request.POST['sportsCode']
+
+            if sportsId == '-':
+
+               if models.Sports.objects.filter(sports_code=sportsCode).exists():
+                    return JsonResponse({'result':'exist'})
+               else:
+                   return JsonResponse({'result': 'not_exist'})
+
+            if sportsId != '-':
+
+                 return JsonResponse({'result': 'not_exist'})
+
+
+    except Exception as e:
+        print("Exception in email_exist coachme/views.py -->", e)
+
+
+javascript
+__________
+
+function checkExistSportsCode(sportsCode) {
+    var flag = false;
+    var hiddenSportsId=$("#sports_hidden_id").val();
+    var sportsDetails = {'hiddenSportsId':hiddenSportsId,'sportsCode': sportsCode};
+
+    console.log(sportsDetails);
+
+    $.ajax({
+        type: "POST",
+        url: "/checkSportsCode/",
+        data: sportsDetails,
+        async: false,
+        success: function (data) {
+            console.log(data.result);
+            if (data.result == 'exist') {
+
+            } else if (data.result == "not_exist") {
+                flag = true;
+            }
+        },
+        error: function (error) {
+            swal('Server error');
+        }
+    });
+
+    return flag;
+}

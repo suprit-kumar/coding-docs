@@ -1,0 +1,48 @@
+{% extends 'backoffice/superadmin_layout.html' %}
+{% load static %}
+{% block title %} Class {% endblock %}
+
+{% block hscripts %}
+
+{% endblock %}
+
+
+{% block content %}
+    <!-- Modal -->
+
+
+    <div class="content">
+        <form action="Chnage" method="POST">
+            <script
+                    src="https://checkout.razorpay.com/v1/checkout.js"
+                    data-key="rzp_test_iCqUbwldnbaG3o"
+                    data-amount="1000"
+                    data-name="Daft Punk"
+                    data-description="Purchase Description"
+                    data-image="vk.jpg"
+                    data-netbanking="true"
+                    data-description="Tron Legacy"
+                    data-prefill.name="Harshil Mathur"
+                    data-prefill.email="harshil@razorpay.com"
+                    data-prefill.contact="9999999999"
+                    data-notes.shopping_order_id="21">
+            </script>
+            <input type="hidden" name="shopping_order_id" value="21">
+        </form>
+    </div>
+
+
+
+{% endblock %}
+{% block fscripts %}
+
+
+    <script>
+        $(document).ready(function () {
+            // Javascript method's body can be found in assets/js/demos.js
+            demo.initGoogleMaps();
+        });
+    </script>
+
+{% endblock %}
+

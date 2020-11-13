@@ -1,0 +1,535 @@
+/**
+ * Created by ACER on 22-10-2020.
+ */
+
+$(document).ready(function () {
+    /*getNumberOfCreatedJobsPerMonthForChart();
+     getNumberOfJobAppliedCandidatePerMonth();*/
+    dummyChart1();
+    dummyChart2();
+});
+
+function selectDate(clicked_date) {
+
+
+    // clicked_date.classList.remove("today");
+    let selectedDate = clicked_date;
+    let monthValue = document.getElementById('month').innerText;
+    let yearValue = document.getElementById('year').innerText;
+
+    console.log(selectedDate + '-' + monthValue + '-' + yearValue);
+}
+
+
+function getNumberOfCreatedJobsPerMonthForChart() {
+
+    var jobsChart = {
+            chart: {
+                type: 'line',
+                height: 200,
+                foreColor: "#999",
+                stacked: true,
+                dropShadow: {
+                    enabled: true,
+                    enabledSeries: [0],
+                    top: -2,
+                    left: 2,
+                    blur: 5,
+                    opacity: 0.06
+                }
+            },
+            colors: ["#00BAEC"],
+            stroke: {
+                curve: "smooth",
+                width: 3
+            },
+            dataLabels: {
+                enabled: true
+            },
+            series: [{
+                name: "Jobs Created",
+                data: []
+            }],
+            xaxis: {
+                categories: [],
+                axisBorder: {
+                    show: false
+                },
+                axisTicks: {
+                    show: false
+                }
+            },
+            yaxis: [
+                {
+                    title: {
+                        text: "No.of Jobs Created"
+                    }
+                },
+            ],
+            grid: {
+                padding: {
+                    right: 5
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'left'
+            },
+            fill: {
+                // type: "solid",
+                // fillOpacity: 0.7
+                gradient: {
+                    enabled: true,
+                    opacityFrom: 0.55,
+                    opacityTo: 0
+                }
+            }
+
+        }
+    ;
+
+    $.ajax({
+        type: 'POST',
+        url: '/employer/get_numberof_createdjobs_permonth_for_chart/',
+        async: true,
+        success: function (data) {
+
+            if (data.result === 'success') {
+                data.monthList.forEach(function (months) {
+                    jobsChart.xaxis.categories.push(months[2].slice(0, 4) + months[2].slice(6))
+                });
+                data.countJobList.forEach(function (jobs) {
+                    jobsChart.series[0].data.push(jobs)
+                });
+                var createdJobchart = new ApexCharts(document.querySelector("#chart1"), jobsChart);
+                createdJobchart.render();
+            }
+        }, error: function (error) {
+            console.log('Error in getNumberOfCreatedJobsPerMonthForChart function-->', error);
+        }
+    });
+
+}
+
+
+function getNumberOfJobAppliedCandidatePerMonth() {
+
+    var candidatesChart = {
+        chart: {
+            type: 'area',
+            height: 200,
+            foreColor: "#999",
+            stacked: true,
+            dropShadow: {
+                enabled: true,
+                enabledSeries: [0],
+                top: -2,
+                left: 2,
+                blur: 5,
+                opacity: 0.06
+            }
+        },
+        colors: ["#00BAEC"],
+        stroke: {
+            curve: "smooth",
+            width: 3
+        },
+        dataLabels: {
+            enabled: true
+        },
+        series: [{
+            name: 'Candidate applied',
+            data: []
+        }],
+
+        xaxis: {
+            categories: [],
+            axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            }
+        },
+        yaxis: [
+            /*    {
+             tooltip: {
+             enabled: false
+             }
+             },*/
+            {
+                title: {
+                    text: "No.of Candidates Applied"
+                }
+            },
+        ],
+
+        grid: {
+            padding: {
+                right: 5
+            }
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'left'
+        },
+        fill: {
+            gradient: {
+                enabled: true,
+                opacityFrom: 0.55,
+                opacityTo: 0
+            }
+        }
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: '/employer/get_numberof_candidate_applied_jobs_permonth_for_chart/',
+        async: true,
+        success: function (data) {
+            if (data.result === 'success') {
+
+                data.monthList.forEach(function (months) {
+                    candidatesChart.xaxis.categories.push(months[2].slice(0, 4) + months[2].slice(6))
+                });
+                data.candidateCount.forEach(function (candidates) {
+                    candidatesChart.series[0].data.push(candidates)
+                });
+                var appliedCandidateChart = new ApexCharts(document.querySelector("#chart2"), candidatesChart);
+                appliedCandidateChart.render();
+            } else if (data.result === 'failed') {
+                swal("Failed to load candidate's chart! Refresh the page and try again");
+            }
+        }, error: function (error) {
+            console.log('Error in getNumberOfCreatedJobsPerMonthForChart function-->', error);
+        }
+    });
+}
+
+
+function dummyChart2() {
+
+    var candidatesChart = {
+        chart: {
+            type: 'area',
+            height: 120,
+            foreColor: "#999",
+            // stacked: true,
+            dropShadow: {
+                enabled: true,
+                enabledSeries: [0],
+                top: -2,
+                left: 2,
+                blur: 5,
+                opacity: 0.06
+            },
+            toolbar: {
+                show: false
+            },
+        },
+
+        colors: ["#F44336"],
+        stroke: {
+            curve: "smooth",
+            width: 3
+        },
+        dataLabels: {
+            enabled: false
+        },
+        series: [{
+            name: "Candidate's Applied",
+            data: []
+        }],
+        xaxis: {
+            categories: [],
+            lines: {
+                show: false
+            },
+            labels: {
+                show: false
+            }
+        },
+        yaxis: {
+            labels: {
+                show: false
+            },
+            lines: {
+                show: false
+            }
+        },
+        grid: {
+            show: false,
+            borderColor: '#90A4AE',
+            strokeDashArray: 0,
+            position: 'back',
+        },
+
+        fill: {
+            gradient: {
+                enabled: true,
+                opacityFrom: 0.55,
+                opacityTo: 0
+            }
+        },
+
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/employer/get_numberof_candidate_applied_jobs_permonth_for_chart/',
+        async: true,
+        success: function (data) {
+            if (data.result === 'success') {
+
+                data.monthList.forEach(function (months) {
+                    candidatesChart.xaxis.categories.push(months[2].slice(0, 4) + months[2].slice(6))
+                });
+                data.candidateCount.forEach(function (candidates) {
+                    candidatesChart.series[0].data.push(candidates)
+                });
+                var appliedCandidateChart = new ApexCharts(document.querySelector("#chart2"), candidatesChart);
+                appliedCandidateChart.render();
+            } else if (data.result === 'failed') {
+                swal("Failed to load candidate's chart! Refresh the page and try again");
+            }
+        }, error: function (error) {
+            console.log('Error in getNumberOfCreatedJobsPerMonthForChart function-->', error);
+        }
+    });
+}
+
+
+function dummyChart1() {
+
+    var jobsChart = {
+        chart: {
+            type: 'area',
+            height: 120,
+            foreColor: "#999",
+            // stacked: true,
+            dropShadow: {
+                enabled: true,
+                enabledSeries: [0],
+                top: -2,
+                left: 2,
+                blur: 5,
+                opacity: 0.06
+            },
+            toolbar: {
+                show: false
+            },
+        },
+
+        colors: ["#00BAEC"],
+        stroke: {
+            curve: "smooth",
+            width: 3
+        },
+        dataLabels: {
+            enabled: false
+        },
+        series: [{
+            name: "Jobs Created",
+            data: []
+        }],
+        xaxis: {
+            categories: [],
+            lines: {
+                show: false
+            },
+            labels: {
+                show: false
+            }
+        },
+        yaxis: {
+            labels: {
+                show: false
+            },
+
+            lines: {
+                show: false
+            }
+        },
+        grid: {
+            show: false,
+            borderColor: '#90A4AE',
+            strokeDashArray: 0,
+            position: 'back',
+        },
+
+        fill: {
+            gradient: {
+                enabled: true,
+                opacityFrom: 0.55,
+                opacityTo: 0
+            }
+        },
+
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/employer/get_numberof_createdjobs_permonth_for_chart/',
+        async: true,
+        success: function (data) {
+
+            if (data.result === 'success') {
+                data.monthList.forEach(function (months) {
+                    jobsChart.xaxis.categories.push(months[2].slice(0, 4) + months[2].slice(6))
+                });
+                data.countJobList.forEach(function (jobs) {
+                    jobsChart.series[0].data.push(jobs)
+                });
+                var createdJobchart = new ApexCharts(document.querySelector("#chart1"), jobsChart);
+                createdJobchart.render();
+            }
+        }, error: function (error) {
+            console.log('Error in getNumberOfCreatedJobsPerMonthForChart function-->', error);
+        }
+    });
+}
+
+
+
+
+##############Python code###########
+@csrf_exempt
+def get_numberof_createdjobs_permonth_for_chart(request):
+    try:
+        if 'usercode' in request.session:
+            user_code = request.session['usercode']
+
+            if request.method == 'POST':
+                monthList = []
+                countJobList = []
+                createdJobs = list(models.Job.objects.annotate(month=ExtractMonth('j_published_on'),
+                                                               year=ExtractYear('j_published_on'),
+                                                               total=Count('j_createdBy')).filter(
+                    j_createdBy=user_code).values('j_createdBy', 'total', 'month', 'year'))
+                
+                for ele in createdJobs:
+                    if ele['month'] == 1:
+                        if [ele['month'], ele['year'], "Jan'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Jan'" + str(ele['year'])])
+                    elif ele['month'] == 2:
+                        if [ele['month'], ele['year'], "Feb'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Feb'" + str(ele['year'])])
+                    elif ele['month'] == 3:
+                        if [ele['month'], ele['year'], "Mar'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Mar'" + str(ele['year'])])
+                    elif ele['month'] == 4:
+                        if [ele['month'], ele['year'], "Apr'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Apr'" + str(ele['year'])])
+                    elif ele['month'] == 5:
+                        if [ele['month'], ele['year'], "May'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "May'" + str(ele['year'])])
+                    elif ele['month'] == 6:
+                        if [ele['month'], ele['year'], "Jun'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Jun'" + str(ele['year'])])
+                    elif ele['month'] == 7:
+                        if [ele['month'], ele['year'], "Jul'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Jul'" + str(ele['year'])])
+                    elif ele['month'] == 8:
+                        if [ele['month'], ele['year'], "Aug'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Aug'" + str(ele['year'])])
+                    elif ele['month'] == 9:
+                        if [ele['month'], ele['year'], "Sep'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Sep'" + str(ele['year'])])
+                    elif ele['month'] == 10:
+                        if [ele['month'], ele['year'], "Oct'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Oct'" + str(ele['year'])])
+                    elif ele['month'] == 11:
+                        if [ele['month'], ele['year'], "Nov'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Nov'" + str(ele['year'])])
+                    elif ele['month'] == 12:
+                        if [ele['month'], ele['year'], "Dec'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Dec'" + str(ele['year'])])
+
+                for dateMonth in monthList:
+                    month = dateMonth[0]
+                    year = dateMonth[1]
+                    total_created_this_month_year = models.Job.objects.filter(j_createdBy=user_code,
+                                                                              j_published_on__year__gte=year,
+                                                                              j_published_on__month__gte=month,
+                                                                              j_published_on__year__lte=year,
+                                                                              j_published_on__month__lte=month).count()
+                    countJobList.append(total_created_this_month_year)
+
+                return JsonResponse({'result': 'success', 'monthList': monthList, 'countJobList': countJobList})
+    except Exception as e:
+        print('Exception in get_numberof_createdjobs_permonth_for_chart adminstration/views.py -->', e)
+        return JsonResponse({'result': 'failed'})
+
+
+@csrf_exempt
+def get_numberof_candidate_applied_jobs_permonth_for_chart(request):
+    try:
+        if 'usercode' in request.session:
+            user_code = request.session['usercode']
+
+            if request.method == "POST":
+                monthList = []
+                appliedCandidates = []
+                getAppliedJobMonthyear = list(models.CandidateJob.objects.annotate(month=ExtractMonth('created_time'),
+                                                                                   year=ExtractYear(
+                                                                                       'created_time')).filter(
+                    job_created_by=user_code).values('month', 'year'))
+
+                for ele in getAppliedJobMonthyear:
+                    if ele['month'] == 1:
+                        if [ele['month'], ele['year'], "Jan'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Jan'" + str(ele['year'])])
+                    elif ele['month'] == 2:
+                        if [ele['month'], ele['year'], "Feb'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Feb'" + str(ele['year'])])
+                    elif ele['month'] == 3:
+                        if [ele['month'], ele['year'], "Mar'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Mar'" + str(ele['year'])])
+                    elif ele['month'] == 4:
+                        if [ele['month'], ele['year'], "Apr'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Apr'" + str(ele['year'])])
+                    elif ele['month'] == 5:
+                        if [ele['month'], ele['year'], "May'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "May'" + str(ele['year'])])
+                    elif ele['month'] == 6:
+                        if [ele['month'], ele['year'], "Jun'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Jun'" + str(ele['year'])])
+                    elif ele['month'] == 7:
+                        if [ele['month'], ele['year'], "Jul'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Jul'" + str(ele['year'])])
+                    elif ele['month'] == 8:
+                        if [ele['month'], ele['year'], "Aug'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Aug'" + str(ele['year'])])
+                    elif ele['month'] == 9:
+                        if [ele['month'], ele['year'], "Sep'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Sep'" + str(ele['year'])])
+                    elif ele['month'] == 10:
+                        if [ele['month'], ele['year'], "Oct'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Oct'" + str(ele['year'])])
+                    elif ele['month'] == 11:
+                        if [ele['month'], ele['year'], "Nov'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Nov'" + str(ele['year'])])
+                    elif ele['month'] == 12:
+                        if [ele['month'], ele['year'], "Dec'" + str(ele['year'])] not in monthList:
+                            monthList.append([ele['month'], ele['year'], "Dec'" + str(ele['year'])])
+
+                for dateMonth in monthList:
+                    month = dateMonth[0]
+                    year = dateMonth[1]
+
+                    total_appliedCandidate_this_month_year = models.CandidateJob.objects.filter(
+                        job_created_by=user_code,
+                        created_time__year__gte=year,
+                        created_time__month__gte=month,
+                        created_time__year__lte=year,
+                        created_time__month__lte=month).count()
+                    appliedCandidates.append(total_appliedCandidate_this_month_year)
+
+                return JsonResponse({'result': 'success', 'monthList': monthList,
+                                     'candidateCount': appliedCandidates})
+
+    except Exception as e:
+        print('Exception in get_numberof_candidate_applied_jobs_permonth_for_chart adminstration/views.py -->', e)
+        return JsonResponse({'result': 'failed'})
+
+
+
+

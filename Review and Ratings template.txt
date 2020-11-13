@@ -1,0 +1,26 @@
+<div class="card-body">
+    <h4 class="header-name">Review</h4>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="photo">
+
+                    <img id="small_profile_pic" src="/media/profileImages/2H0N0DQ6QEGO7QV5.jpg" alt="Profile Photo">
+                </div>
+                <span>Jarvis</span><br>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star checked"></span>
+                <span class="fa fa-star"></span>
+                <span class="fa fa-star"></span>
+            </div>
+            <div class=" col-sm-8">Search Results
+                Featured snippet from the web
+                A paragraph is a series of related sentences developing a central idea, called the topic. Try to think
+                about paragraphs in terms of thematic unity:
+            </div>
+        </div>
+    </div>
+
+
+</div>

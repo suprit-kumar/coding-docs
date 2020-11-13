@@ -1,0 +1,428 @@
+def super_admin_dashboard(request):
+#     print('request: ', request.path)
+#     user_code = ""
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                             'role_id__role_code').filter(
+#                 user_code=user_code)
+# 
+#             return render(request, 'backoffice/superadmin_dashboard.html', {'userdetails': list(user_details)})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  Super admin dashboard ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def location_manager_dashboard(request):
+#     user_code = ""
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/locationManager_dashboard.html', {'userdetails': list(user_details)})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  location_manager_dashboard dashboard ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def user_profile(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(models.User.objects.values('name', 'email', 'username', 'user_code', 'about', 'address',
+#                                                            'profile_pic', 'city', 'country', 'pincode',
+#                                                            'contact', 'role_id__role_code',
+#                                                            'role_id__role_name').filter(user_code=user_code))
+# 
+#             # print('user_details ==> ', user_details)
+# 
+#             return render(request, 'backoffice/superadmin_user.html', {'userdetails': user_details})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  user_profile ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_location(request):
+#     user_code = ""
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_location.html', {'userdetails': user_details})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  Super admin location ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_court(request):
+#     user_code = ""
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             location_list = list(models.Location.objects.values('location_name', 'location_id'))
+# 
+#             return render(request, 'backoffice/superadmin_court.html',
+#                           {'location_list': location_list, 'userdetails': user_details})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  Super admin court ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_administrator(request):
+#     user_code = ""
+#     try:
+#         if 'usercode' in request.session:
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_administrator.html', {'userdetails': user_details})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  Super admin administrator  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_report(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_reports.html', {'userdetails': user_details})
+# 
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_report  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_ledger_report(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_ledger_report.html', {'userdetails': user_details})
+# 
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_ledger_report  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_class_reviews(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_class_reviews.html', {'userdetails': user_details})
+# 
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_class_reviews  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_sports(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_sports.html', {'userdetails': user_details})
+# 
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_sports  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_coach(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_coach.html', {'userdetails': user_details})
+# 
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_coach  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_coachee(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_coachee.html', {'userdetails': user_details})
+# 
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_coachee  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_class(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_class.html', {'userdetails': user_details})
+# 
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_class  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_location_manager(request):
+#     user_code = ""
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/superadmin_location_manager.html', {'userdetails': user_details})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_location_manager  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def super_admin_coach_manual_payment_entry(request):
+#     user_code = ""
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/coach_manaulpayment_entry.html', {'userdetails': user_details})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  super_admin_coach_manual_payment_entry  ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def location_manager_user_profile(request):
+#     try:
+#         if 'usercode' in request.session:
+#             global user_details
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(models.User.objects.values('name', 'email', 'username', 'user_code', 'about', 'address',
+#                                                            'profile_pic', 'city', 'country', 'pincode',
+#                                                            'contact', 'role_id__role_code',
+#                                                            'role_id__role_name').filter(user_code=user_code))
+# 
+#             return render(request, 'backoffice/locationManager_user.html', {'userdetails': user_details})
+#         else:
+#             # request.session.flush()
+#             return HttpResponseRedirect('/500-error/')
+#     except Exception as e:
+#         print('Exception in method  location_manager_user_profile ---> ', e)
+#         # request.session.flush()
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def location_manager_classes(request):
+#     try:
+#         if 'usercode' in request.session:
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/locationManager_classes.html', {'userdetails': user_details})
+#         else:
+#             return HttpResponseRedirect('/500-error/')
+# 
+#     except Exception as e:
+#         print('Exception in method  location_manager_classes  ---> ', e)
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def location_manager_finished_classes(request):
+#     try:
+#         if 'usercode' in request.session:
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/locationManager_finishedclasses.html', {'userdetails': user_details})
+#         else:
+#             return HttpResponseRedirect('/500-error/')
+# 
+#     except Exception as e:
+#         print('Exception in method  location_manager_finished_classes  ---> ', e)
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def location_manager_report(request):
+#     try:
+#         if 'usercode' in request.session:
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/locationManager_report.html', {'userdetails': user_details})
+#         else:
+#             return HttpResponseRedirect('/500-error/')
+# 
+#     except Exception as e:
+#         print('Exception in method  location_manager_report  ---> ', e)
+#         return HttpResponseRedirect('/500-error/')
+# 
+# 
+# def location_manager_coach(request):
+#     try:
+#         if 'usercode' in request.session:
+#             user_code = request.session['usercode']
+# 
+#             user_details = list(
+#                 models.User.objects.all().values('name', 'email', 'username', 'user_code', 'profile_pic',
+#                                                  'role_id__role_code').filter(
+#                     user_code=user_code))
+# 
+#             return render(request, 'backoffice/locationManager_coach.html', {'userdetails': user_details})
+#         else:
+#             return HttpResponseRedirect('/500-error/')
+# 
+#     except Exception as e:
+#         print('Exception in method  location_manager_coach  ---> ', e)
+#         return HttpResponseRedirect('/500-error/')

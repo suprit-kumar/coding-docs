@@ -1,0 +1,345 @@
+#Change mobile of email by otp
+
+#------------------- HTML Modal ------------------------------------
+
+  <!--OTP Modal -->
+    <div class="modal fade" id="otp_modal" tabindex="-1" role="dialog" aria-labelledby="otp_modal_label"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="otp_modal_label">Change Email or Mobile through OTP</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="radio-div">
+                    <fieldset>
+                        <div class="some-class">
+                            <input type="radio" class="radio" name="otpradio" value="checkEmailRadio" id="radio_email"/>
+                            <label>Email</label>
+                            <input type="radio" class="radio" name="otpradio" value="checkMobileRadio"
+                                   id="radio_mobile"/>
+                            <label>Mobile</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="user_id" value="">
+                    {#                    <input type="hidden" class="user" value="locationManager">#}
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                <input type="text" class="form-control" onkeypress="return RestrictSpace()"
+                                       id="change_email" maxlength="60"
+                                       placeholder="Email id" disabled>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary btn-sm" id="request_email_otp" disabled>OTP
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="form-group">
+                                <input type="text" class="form-control" onkeydown="keyValidate()" id="change_mobile"
+                                       maxlength="10"
+                                       placeholder="Mobile Number" disabled>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary btn-sm" id="request_mobile_otp" disabled>OTP
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                <input type="text" class="form-control" onkeydown="keyValidate()" id="otp_input"
+                                       maxlength="6"
+                                       placeholder="Enter 6 digit OTP">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="validate_otp">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	
+#--------------  css - work ---------------------
+/*OTP Modal Css*/
+
+fieldset {
+    overflow: hidden
+}
+
+.some-class {
+    float: left;
+    clear: none;
+}
+
+label {
+    float: left;
+    clear: none;
+    display: block;
+    padding: 0 1em 0 8px;
+}
+
+input[type=radio],
+input.radio {
+    cursor: pointer;
+    float: left;
+    clear: none;
+    margin: 2px 0 0 2px;
+}
+ .radio-div {
+            margin-left: 24px;
+            margin-top: 4px;
+        }
+		
+#-------------------Javascript-------------------------------
+
+"<td><span class=''><label class='btn btn-success btn-sm open-otp-modal' id='" + data.dataList[i].user_code + "'  title='Edit Email or Mobile' style='cursor: pointer;'><i class='fa fa-pencil-square-o' style='color: white' aria-hidden='true'></i> </label></span></td>" +
+
+$(".open-otp-modal").click(function () {
+	var id = $(this).attr('id').trim();
+	$('#user_id').val(id);
+
+	$('#otp_modal').modal('show');
+});
+				
+
+$('input:radio[name="otpradio"]').change(function () {
+	if ($(this).is(':checked') && $(this).val() === 'checkEmailRadio') {
+		$("#change_email,#request_email_otp").prop('disabled', false);
+		$("#change_mobile,#request_mobile_otp").prop('disabled', true);
+		$('#change_mobile').val('')
+	} else if ($(this).is(':checked') && $(this).val() === 'checkMobileRadio') {
+		$("#change_mobile,#request_mobile_otp").prop('disabled', false);
+		$("#change_email,#request_email_otp").prop('disabled', true);
+		$('#change_email').val('');
+	}
+});
+
+$('#otp_modal').on('hidden.bs.modal', function (e) {
+	$('input:radio[name="otpradio"]').prop('checked', false);
+	$(this).find("#change_email,#change_mobile").val('').end();
+	$(this).find("#change_email,#change_mobile,#request_mobile_otp,#request_email_otp").prop('disabled', true);
+});
+
+
+function sendOtpRequest() {
+
+    var user_code = $('#user_id').val();
+    var get_email_id = $('#change_email').val();
+    var get_mobile_number = $('#change_mobile').val();
+    var emailadd = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+    if (get_email_id !== '') {
+        if (!(emailadd).test(get_email_id)) {
+            swal("Enter Valid Email Id");
+            return false;
+        }
+        else if (!checkUserMail(get_email_id)) {
+            swal("Email Id  Already Exist ! Try another");
+            return false;
+        }
+    }
+    if (get_mobile_number !== '') {
+        if (get_mobile_number.length < 10) {
+            swal("Mobile number should be 10 digits");
+            return false;
+        } else if (!checkUserNumber(get_mobile_number)) {
+            swal("Mobile number already exist ! Try another");
+            return false;
+        }
+    }
+
+    $.ajax({
+        type: 'POST',
+        url: '/send_otp_request/',
+        data: {'user_code': user_code, 'get_email_id': get_email_id, 'get_mobile_number': get_mobile_number},
+        async: false,
+        success: function (data) {
+            if (data.result === 'success') {
+                if (data.mobile === 'sent_to_mobile') {
+                    swal('OTP has been sent your entered mobile number');
+                } else if (data.emailId === 'sent_to_email') {
+                    swal('OTP has been sent your entered email id');
+                }
+            } else if (data.result === 'failed') {
+                swal('Failed to send otp! Refresh the page and try again');
+            }
+        }, error: function (error) {
+            swal('Error in function sendOtpRequest', error);
+        }
+    })
+}
+
+
+function updateMobileOrEmailByOtp() {
+
+    var user_code = $('#user_id').val();
+    var update_email = $('#change_email').val();
+    var update_mobile = $('#change_mobile').val();
+    var user_type = 'coachee';
+    var otp = $('#otp_input').val();
+
+    if (update_email === '' && update_mobile === '') {
+        swal('Enter Email id or Mobile number');
+        return false;
+    } else if (otp === '') {
+        swal('Enter OTP');
+        return false;
+    } else {
+        var data = {
+            'user_code': user_code,
+            'update_email': update_email,
+            'update_mobile': update_mobile,
+            'user_type': user_type,
+            'otp': otp
+        };
+        $.ajax({
+            type: 'POST',
+            url: '/update_mobile_or_email_by_otp/',
+            data: data,
+            async: false,
+            success: function (data) {
+                var datas = JSON.parse(data);
+                if (datas.result === 'success') {
+                    if (datas.mobile === 'updated') {
+                        getAllCoacheeList();
+                        resetOTPModal();
+                        swal("OTP Verified!", "Your mobile number has been successfully updated!", "success");
+                    } else if (datas.emailID === 'updated') {
+                        getAllCoacheeList();
+                        resetOTPModal();
+                        swal("OTP Verified!", "Your primary email id has been successfully updated!", "success");
+                    }
+                } else if (datas.result === 'otp_expired') {
+                    swal("OTP Expired!", "OTP has expired! Try again!", "error");
+                } else if (datas.result === 'failed') {
+                    swal('Failed to update! Refresh and try again');
+                }
+            }, error: function (error) {
+                swal('Error in function updateMobileOrEmailByOtp', error);
+            }
+        })
+    }
+}
+
+
+function resetOTPModal() {
+    $('#otp_modal').modal('hide');
+    $('#otp_input').val('');
+}
+
+
+#------------------------urls.py------------------------------
+path('send_otp_request/', views.generate_otp, name='send_otp_request'),
+path('update_mobile_or_email_by_otp/', views.update_mobile_or_email_by_otp, name='update_mobile_or_email_by_otp'),
+
+#------------------------views.py-----------------------------
+
+@csrf_exempt
+def generate_otp(request):
+    try:
+        if request.method == 'POST':
+            get_user_code = request.POST['user_code']
+            get_mobile_number = request.POST['get_mobile_number']
+            get_email_id = request.POST['get_email_id']
+
+            if get_user_code != '':
+                otp = random.randint(100000, 999999)
+                created_time = datetime.datetime.now()
+                expiry_time = created_time + relativedelta(minutes=5)
+                validate_user_code = models.validate_otp.objects.filter(user_code=get_user_code).exists()
+                if validate_user_code is True:
+                    models.validate_otp.objects.filter(user_code=get_user_code).update(u_otp=otp,
+                                                                                       created_at=created_time,
+                                                                                       expired_at=expiry_time)
+                else:
+                    models.validate_otp.objects.create(user_code=get_user_code, u_otp=otp, created_at=created_time,
+                                                       expired_at=expiry_time)
+
+                if get_mobile_number != '':
+                    try:
+                        utils.sendSMS(utils.sendSmsApi, get_mobile_number, utils.senderIdTextLocal,
+                                      'Dear Customer,Your OTP for verification is ' + str(otp))
+                        return JsonResponse({"result": 'success', "mobile": 'sent_to_mobile'})
+                    except Exception as e:
+                        print('Exception in sending otp for mobile number verification --->', e)
+                        return JsonResponse({'result:failed'})
+                else:
+                    try:
+                        utils.send_manually_email(subject='One Time Password (OTP)',
+                                                  message="Dear Customer,Your OTP for verification is: " + str(otp),
+                                                  to=get_email_id)
+                        return JsonResponse({'result': 'success', 'emailId': 'sent_to_email'})
+                    except Exception as e:
+                        print('Exception in sending otp for mobile number verification --->', e)
+                        return JsonResponse({'result:failed'})
+            else:
+                return JsonResponse({'result:failed'})
+    except Exception as e:
+        print('Exception in generate_otp coachme/views.py -->', e)
+        return JsonResponse({'result:failed'})
+
+
+@csrf_exempt
+def update_mobile_or_email_by_otp(request):
+    try:
+        if request.method == 'POST':
+            user_code = request.POST['user_code']
+            update_email = request.POST['update_email']
+            update_mobile = request.POST['update_mobile']
+            user_type = request.POST['user_type']
+            otp = request.POST['otp']
+
+
+            if user_code != '':
+                validate_otp_time = models.validate_otp.objects.filter(user_code=user_code,u_otp=otp,
+                                                                       expired_at__gte=datetime.datetime.now()).exists()
+                if validate_otp_time is True:
+                    if update_mobile != '':
+                        if user_type == 'locationManager':
+                            models.LocationManager.objects.filter(user_code=user_code).update(
+                                location_manager_number=update_mobile)
+                        elif user_type == 'coach':
+                            models.Coach.objects.filter(user_code=user_code).update(coach_mobile=update_mobile)
+                        elif user_type == 'coachee':
+                            models.Coachee.objects.filter(user_code=user_code).update(coachee_mobile=update_mobile)
+
+                        models.User.objects.filter(user_code=user_code).update(contact=update_mobile)
+                        return JsonResponse(
+                            json.dumps({'result': 'success', 'mobile': 'updated'}, cls=DjangoJSONEncoder), safe=False)
+                    elif update_email != '':
+                        if user_type == 'locationManager':
+                            models.LocationManager.objects.filter(user_code=user_code).update(
+                                location_manager_email=update_email)
+                        elif user_type == 'coach':
+                            models.Coach.objects.filter(user_code=user_code).update(coach_email=update_email)
+                        elif user_type == 'coachee':
+                            models.Coachee.objects.filter(user_code=user_code).update(coachee_email=update_email)
+
+                        models.User.objects.filter(user_code=user_code).update(username=update_email,
+                                                                               email=update_email)
+                        return JsonResponse(
+                            json.dumps({'result': 'success','emailID':'updated'}, cls=DjangoJSONEncoder), safe=False)
+                elif validate_otp_time is False:
+                    return JsonResponse(
+                        json.dumps({'result': 'otp_expired'}, cls=DjangoJSONEncoder), safe=False)
+        else:
+            return JsonResponse(
+                json.dumps({'result': 'failed'}, cls=DjangoJSONEncoder), safe=False)
+
+    except Exception as e:
+        print('Exception in verify_otp coachme/views.py -->', e)
+        return JsonResponse(
+            json.dumps({'result': 'failed'}, cls=DjangoJSONEncoder), safe=False)

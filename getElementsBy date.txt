@@ -1,0 +1,7 @@
+  year = 2020
+        month = 5
+
+        class_data=models.SubscriptionCoachee.objects.values('subscription_id').filter(subscription_created_time__year__gte=year,
+                                                                                       subscription_created_time__month__gte=month,
+                                                                                       subscription_created_time__year__lte=year,
+                                                                                       subscription_created_time__month__lte=month)

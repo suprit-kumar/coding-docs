@@ -1,0 +1,162 @@
+"<td><span class='upload-img'><label class='btn btn-success btn-sm upload_coach_image' id=' " + data.user_table_info[i].user_code + " '  title='Profile picture' style='cursor: pointer;'><i class='fa fa-picture-o' style='color: white' aria-hidden='true'></i></label></span></td>" +
+
+
+
+function readImageURL(input) {
+
+    if (input.files && input.files[0]) {
+        var fileId = document.getElementById("file").files[0];
+
+        formdata = new FormData();
+        formdata.append('image', fileId);
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('#coach_profile_pic').attr('src', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+
+        $(".save_image_coach").click(function () {
+
+            var coach_usercode = $('#coach_img_hidded_id').val();
+
+            formdata.append('usercode', coach_usercode);
+
+            $.ajax({
+                type: "POST",
+                url: "/upload_coach_image/",
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.result === "success") {
+                        swal('Coach profile picture uploaded successfully');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    } else if (data.result === "failed") {
+                        swal("Picture save failed");
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                },
+                error: function (error) {
+                    swal("Error in readImageURL function", error);
+                }
+            })
+        })
+    }
+}
+
+
+
+
+function displayCoachPicture(usercode) {
+
+    $.ajax({
+        type: 'POST',
+        url: '/display_coach_picture/',
+        data: {'usercode': usercode},
+        success: function (data) {
+            if (data.result === 'success') {
+                $("#coach_profile_pic").attr("src", data.coach_image);
+            }else if(data.result === 'no_result'){
+               $("#coach_profile_pic").attr("src", "/media/coachImages/" + data.coach_image);
+            } else if (data.result === 'failed') {
+                swal('Failed to load image');
+            }
+        },
+        error: function (error) {
+            swal('Error in displayCoachPicture function', error);
+        }
+    })
+}
+
+
+
+<div class="modal fade" id="coach_profile_pic_modal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="color:blue;">Coach profile picture</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="coach_img_hidded_id" value="-">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="col-12" style="text-align: center;">
+                                <p><input type="file" accept="image/*" name="image" id="file"
+                                          onchange="readImageURL(this)" style="display: none;"></p>
+                                <img class="avatar" src="" style="height: 100px;width: 100px;"
+                                     id="coach_profile_pic">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="upload-save-btn" style="margin-top: 18%;">
+                            <span><label for="file" class="btn btn-success btn-sm upload_image_coach" title="Upload Image"
+                             style="cursor: pointer;">
+                                <i class="fa fa-upload" aria-hidden="true"></i></label></span>
+                                <span><label class="btn btn-success btn-sm save_image_coach" title="Save Image"
+                                             style="cursor: pointer;"><i class="fa fa-floppy-o" aria-hidden="true"></i></label></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	
+	
+	
+	
+	
+	
+	@csrf_exempt
+def upload_coach_image(request):
+    try:
+        if request.method == 'POST':
+
+            user_code=request.POST['usercode']
+            coach_image=request.FILES.get('image')
+
+            if len(coach_image)>0:
+                file_name = user_code + '.jpg'
+                fullname = os.path.join(settings.MEDIA_ROOT, 'coachImages/' + file_name)
+                if os.path.exists(fullname):
+                    os.remove(fullname)
+                path = default_storage.save('coachImages/' + file_name, ContentFile(coach_image.read()))
+                os.path.join(settings.MEDIA_ROOT, path)
+                models.Coach.objects.filter(user_code=user_code).update(profileImg=file_name)
+                models.User.objects.filter(user_code=user_code).update(profile_pic=file_name)
+
+                return JsonResponse({"result": "success"})
+            else:
+                return JsonResponse({"result": "failed"})
+    except Exception as e:
+        print('Exception in upload_coach_image coachme/views.py -->', e)
+        return JsonResponse({'result': 'failed'})
+
+@csrf_exempt
+def display_coach_picture(request):
+    try:
+        if request.method=="POST":
+            usercode=request.POST['usercode']
+
+            coachImage=list(models.Coach.objects.values('profileImg').filter(user_code=usercode))
+            if coachImage[0]['profileImg'] !='':
+                coach_img=coachImage[0]['profileImg']
+                return JsonResponse(
+                    {'result': 'success', 'coach_image': coach_img})
+            else:
+                Koach_image = 'blank-profile-pic.png'
+                return JsonResponse(
+                    {'result': 'no_result', 'coach_image': Koach_image})
+    except Exception as e:
+        print('Exception in display_coach_picture coachme/views.py -->', e)
+        return JsonResponse({'result': 'failed'})
