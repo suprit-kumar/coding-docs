@@ -532,4 +532,66 @@ def get_numberof_candidate_applied_jobs_permonth_for_chart(request):
 
 
 
+def fetchWeeksChart(data):
+    weekList = []
+    for ele in data:
+        year = ele['year']
+        week = ele['week']
+        month = ele['month']
+        firstdayofweek = datetime.datetime.strptime(f'{year}-W{int(week )- 1}-1', "%Y-W%W-%w").date()
+        lastdayofweek = firstdayofweek + datetime.timedelta(days=6.9)
+
+        if [str(firstdayofweek) + ' To ' + str(lastdayofweek), month, year, week] not in weekList:
+            weekList.append([str(firstdayofweek) + ' To ' + str(lastdayofweek), month, year, week])
+
+    return weekList
+
+	
+@csrf_exempt
+def fetch_total_created_jobs_chart(request):
+    try:
+        if 'usercode' in request.session:
+            user_code = request.session['usercode']
+
+            if request.method == 'POST':
+                jobsCreated = []
+                jobsClosed = []
+                models.Job.objects.filter(job_deadline__lt=datetime.datetime.now() - timedelta(days=1)).update(
+                    j_status='closed')
+                fetchCreatedJobs = list(models.Job.objects.annotate(month=ExtractMonth('j_published_on'),
+                                                                    year=ExtractYear('j_published_on'),
+                                                                    week=ExtractWeek('j_published_on'),
+                                                                    total=Count('j_id')).values(
+                    'j_id', 'total', 'month', 'year', 'week', 'job_deadline', 'j_published_on'))
+                weekList = fetchWeeksChart(fetchCreatedJobs)
+
+                for dateMonth in weekList:
+                    month = dateMonth[1]
+                    year = dateMonth[2]
+                    week = dateMonth[3]
+                    total_created_this_week = models.Job.objects.filter(
+                        j_published_on__year__gte=year,
+                        j_published_on__month__gte=month,
+                        j_published_on__year__lte=year,
+                        j_published_on__month__lte=month,
+                        j_published_on__week=week,
+                        j_published_on__gte=datetime.datetime.now() - timedelta(days=61)).count()
+                    jobsCreated.append(total_created_this_week)
+
+                    total_closed_this_week = models.Job.objects.filter(
+                        j_published_on__year__gte=year,
+                        j_published_on__month__gte=month,
+                        j_published_on__year__lte=year,
+                        j_published_on__month__lte=month,
+                        j_published_on__gte=datetime.datetime.now() - timedelta(days=61),
+                        job_deadline__week=week, j_status='closed',
+                    ).count()
+                    jobsClosed.append(total_closed_this_week)
+
+                return JsonResponse(
+                    {'result': 'success', 'weekList': weekList, 'jobsCreated': jobsCreated, 'jobsClosed': jobsClosed,
+                     "total": sum(jobsCreated)})
+    except Exception as e:
+        print('Exception in fetch_total_registered_employer_chart administration/views.py-->', e)
+        return JsonResponse({'result': 'failed'})
 
