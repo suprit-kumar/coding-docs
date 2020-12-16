@@ -1,0 +1,30 @@
+df = pd.DataFrame(rcv_csvData)
+                host = settings.DATABASES['default']['HOST']
+                user = settings.DATABASES['default']['USER']
+                password = settings.DATABASES['default']['PASSWORD']
+                database_name = settings.DATABASES['default']['NAME']
+
+                database_url = 'postgresql://{user}:{password}@{host}:5432/{database_name}'.format(
+                    user=user,
+                    host=host,
+                    password=password,
+                    database_name=database_name,
+                )
+
+                engine = create_engine(database_url, echo=False)
+                df.to_sql('test_data', con=engine, if_exists='append', index=False,
+                          method="multi")
+
+
+
+class TestData(models.Model):
+    region = models.CharField(max_length=250, null=True, default="")
+    hh = models.CharField(max_length=250, null=True, default="")
+    rate = models.CharField(max_length=250, null=True, default="")
+    volume = models.CharField(max_length=250, null=True, default="")
+
+    class Meta:
+        db_table = "test_data"
+
+    def __unicode__(self):
+        return self

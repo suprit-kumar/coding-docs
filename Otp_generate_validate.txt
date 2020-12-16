@@ -1,0 +1,95 @@
+@csrf_exempt
+def generate_otp(request):
+    try:
+        if request.method == 'POST':
+            get_user_code = request.POST['user_code']
+            get_mobile_number = request.POST['get_mobile_number']
+            get_email_id = request.POST['get_email_id']
+
+            if get_user_code != '':
+                otp = random.randint(100000, 999999)
+                created_time = datetime.datetime.now()
+                expiry_time = created_time + relativedelta(minutes=5)
+                validate_user_code = models.validate_otp.objects.filter(user_code=get_user_code).exists()
+                if validate_user_code is True:
+                    models.validate_otp.objects.filter(user_code=get_user_code).update(u_otp=otp,
+                                                                                       created_at=created_time,
+                                                                                       expired_at=expiry_time)
+                else:
+                    models.validate_otp.objects.create(user_code=get_user_code, u_otp=otp, created_at=created_time,
+                                                       expired_at=expiry_time)
+
+                if get_mobile_number != '':
+                    try:
+                        utils.sendSMS(utils.sendSmsApi, get_mobile_number, utils.senderIdTextLocal,
+                                      'Dear Customer,Your OTP for verification is ' + str(otp))
+                        return JsonResponse({"result": 'success', "mobile": 'sent_to_mobile'})
+                    except Exception as e:
+                        print('Exception in sending otp for mobile number verification --->', e)
+                        return JsonResponse({'result:failed'})
+                else:
+                    try:
+                        utils.send_manually_email(subject='One Time Password (OTP)',
+                                                  message="Dear Customer,Your OTP for verification is: " + str(otp),
+                                                  to=get_email_id)
+                        return JsonResponse({'result': 'success', 'emailId': 'sent_to_email'})
+                    except Exception as e:
+                        print('Exception in sending otp for mobile number verification --->', e)
+                        return JsonResponse({'result:failed'})
+            else:
+                return JsonResponse({'result:failed'})
+    except Exception as e:
+        print('Exception in generate_otp coachme/views.py -->', e)
+        return JsonResponse({'result:failed'})
+
+
+@csrf_exempt
+def update_mobile_or_email_by_otp(request):
+    try:
+        if request.method == 'POST':
+            user_code = request.POST['user_code']
+            update_email = request.POST['update_email']
+            update_mobile = request.POST['update_mobile']
+            user_type = request.POST['user_type']
+            otp = request.POST['otp']
+
+            if user_code != '':
+                validate_otp_time = models.validate_otp.objects.filter(user_code=user_code, u_otp=otp,
+                                                                       expired_at__gte=datetime.datetime.now()).exists()
+                if validate_otp_time is True:
+                    if update_mobile != '':
+                        if user_type == 'locationManager':
+                            models.LocationManager.objects.filter(user_code=user_code).update(
+                                location_manager_number=update_mobile)
+                        elif user_type == 'coach':
+                            models.Coach.objects.filter(user_code=user_code).update(coach_mobile=update_mobile)
+                        elif user_type == 'coachee':
+                            models.Coachee.objects.filter(user_code=user_code).update(coachee_mobile=update_mobile)
+
+                        models.User.objects.filter(user_code=user_code).update(contact=update_mobile)
+                        return JsonResponse(
+                            json.dumps({'result': 'success', 'mobile': 'updated'}, cls=DjangoJSONEncoder), safe=False)
+                    elif update_email != '':
+                        if user_type == 'locationManager':
+                            models.LocationManager.objects.filter(user_code=user_code).update(
+                                location_manager_email=update_email)
+                        elif user_type == 'coach':
+                            models.Coach.objects.filter(user_code=user_code).update(coach_email=update_email)
+                        elif user_type == 'coachee':
+                            models.Coachee.objects.filter(user_code=user_code).update(coachee_email=update_email)
+
+                        models.User.objects.filter(user_code=user_code).update(username=update_email,
+                                                                               email=update_email)
+                        return JsonResponse(
+                            json.dumps({'result': 'success', 'emailID': 'updated'}, cls=DjangoJSONEncoder), safe=False)
+                elif validate_otp_time is False:
+                    return JsonResponse(
+                        json.dumps({'result': 'otp_expired'}, cls=DjangoJSONEncoder), safe=False)
+        else:
+            return JsonResponse(
+                json.dumps({'result': 'failed'}, cls=DjangoJSONEncoder), safe=False)
+
+    except Exception as e:
+        print('Exception in verify_otp coachme/views.py -->', e)
+        return JsonResponse(
+            json.dumps({'result': 'failed'}, cls=DjangoJSONEncoder), safe=False)
